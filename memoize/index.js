@@ -1,9 +1,14 @@
 function memoize(func) {
-	var cached;
+	var cached = {};
 	return function() {
-		if (!cached) {
-			cached = func([].slice.apply(this, arguments));
+		var args = [].slice.call(arguments);
+
+		// Note: doesn't work for circular references
+		if (!cached[JSON.stringify(args)]) {
+			cached[JSON.stringify(args)] = func.apply(null, args);
 		}
 		return cached;
 	}
 }
+
+module.exports = memoize;
