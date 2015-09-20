@@ -2,8 +2,8 @@ var assert = require('assert');
 var invertTree = require('./');
 
 describe('invert-tree', function() {
-  it('inverts a binary tree', function() {
 
+  function setupRoot() {
     var root = {value: 6};
     var left = {value: 4};
     var right = {value: 8};
@@ -18,6 +18,10 @@ describe('invert-tree', function() {
     right.left = leftOfRight;
     right.right = rightOfRight;
 
+    return root;
+  }
+  it('inverts a binary tree', function() {
+    var root = setupRoot();
     invertTree(root);
 
     assert.deepEqual(root, {
@@ -43,5 +47,31 @@ describe('invert-tree', function() {
     });
 
 
+  });
+
+  it('inverts an uneven binary tree', function() {
+    var root = setupRoot();
+    root.left.left = undefined;
+    invertTree(root);
+
+    assert.deepEqual(root, {
+      "value": 6,
+      "left": {
+        "value": 8,
+        "left": {
+          "value": 9
+        },
+        "right": {
+          "value": 7
+        }
+      },
+      "right": {
+        "value": 4,
+        "left": {
+          "value": 5
+        },
+        "right": undefined
+      }
+    });
   });
 });
