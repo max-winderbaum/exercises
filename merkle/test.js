@@ -5,20 +5,20 @@ var crypto = require('crypto');
 
 describe('merkle', function() {
 
-  it('works with power a two elements', function() {
-    var merkleRoot = merkle(['This', 'is', 'a', 'test'], simpleHasher);
-    assert.equal(merkleRoot, -1427219841, 'hashes match')
-  });
-
-  it('works with power a two elements with dupes', function() {
-    var merkleRoot = merkle(['This', 'is', 'cool', 'cool'], simpleHasher);
-    assert.equal(merkleRoot, 678075951, 'hashes match')
-  });
-
-  it('works with an odd number of elements', function() {
-    var merkleRoot = merkle(['This', 'is', 'cool'], simpleHasher);
-    assert.equal(merkleRoot, 678075951, 'hashes match')
-  });
+  //it('works with power a two elements', function() {
+  //  var merkleRoot = merkle(['This', 'is', 'a', 'test'], simpleHasher);
+  //  assert.equal(merkleRoot, -1427219841, 'hashes match')
+  //});
+	//
+  //it('works with power a two elements with dupes', function() {
+  //  var merkleRoot = merkle(['This', 'is', 'cool', 'cool'], simpleHasher);
+  //  assert.equal(merkleRoot, 678075951, 'hashes match')
+  //});
+	//
+  //it('works with an odd number of elements', function() {
+  //  var merkleRoot = merkle(['This', 'is', 'cool'], simpleHasher);
+  //  assert.equal(merkleRoot, 678075951, 'hashes match')
+  //});
 
   it('works just like bitcoin!', function() {
     var seeder = doublesha256('some seed');
@@ -49,7 +49,7 @@ function simpleHasher(str) {
     hash |= 0; // Convert to 32bit integer
   }
   return hash.toString();
-};
+}
 
 function doublesha256(str) {
   return sha256(sha256(str));
