@@ -1,39 +1,46 @@
 function throttlePromises(maxConcurrent, promiseArray) {
 	var resultSet = [];
-	var lastChunk = false;
-	return new Promise(function(resolve) {
-		function next() {
-			var chunk = grabChunk(promiseArray, maxConcurrent);
-			console.log(Promise.all.toString());
-			Promise.all(chunk).then(function(results) {
-				console.log(executing);
-				resultSet = resultSet.concat(results);
-				if (lastChunk) {
-					resolve(resultSet);
-					return;
-				}
-				next();
-			});
-		}
-		next();
-	});
+	var promiseIndex = 0;
+	var numToComplete = promiseArray.length;
+	var numComplete = 0;
 
-	function grabChunk(promiseArray, size) {
-		if (promiseArray.length <= size) {
-			lastChunk = true;
-		}
-		var chunk = [];
-		var current;
-		for(var i=0; i<size; i++) {
-			current = promiseArray.shift();
-			if (current) {
-				chunk.push(current());
+	return new Promise(function(resolve) {
+
+		/**
+		 * 1. Get and execute the next promise in the array
+		 * 2. On promise completion, fill the data into the result set
+		 * 3. either resolve the entire result set (the end condition) or recurse
+		 */
+		function spinupNextPromise() {
+			if(promiseArray.length > 0) {
+				// Save where we are in the promise array
+				var currPromiseIndex = promiseIndex;
+				promiseIndex++;
+
+				// Get and execute the next promise
+				var nextPromise = promiseArray[currPromiseIndex]();
+				nextPromise.then(function(data) {
+
+					// Fill in result set
+					resultSet[currPromiseIndex] = data;
+					numComplete++;
+					if(numComplete >= numToComplete) {
+
+						// end condition - everything's been filled in
+						resolve(resultSet);
+					} else {
+
+						// recurse
+						spinupNextPromise();
+					}
+				});
 			}
 		}
-		return chunk;
-	}
+
+		for(var i = 0; i < maxConcurrent; i ++) {
+			spinupNextPromise();
+		}
+	});
 }
-
-
 
 module.exports = throttlePromises;
